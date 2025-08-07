@@ -2,6 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+[ExecuteAlways]
 public class HexInstancer : MonoBehaviour
 {
     public HexConfig config;
@@ -46,7 +51,7 @@ public class HexInstancer : MonoBehaviour
             }
             textLabels.Clear();
         }
-        
+
 
         if (config == null)
         {
@@ -115,7 +120,7 @@ public class HexInstancer : MonoBehaviour
             Graphics.DrawMeshInstanced(hexMesh, 0, innerMaterial, highlightMatrices.GetRange(i, count));
             Graphics.DrawMeshInstanced(hexMesh, 1, borderHighlightMaterial, highlightMatrices.GetRange(i, count));
         }
-        
+
         for (int i = 0; i < testMatrices.Count; i += 1023)
         {
             int count = Mathf.Min(1023, testMatrices.Count - i);
@@ -183,9 +188,39 @@ public class HexInstancer : MonoBehaviour
 
         // label.transform.LookAt(Camera.main.transform);
         label.transform.Rotate(90, 0, 0); // So text isn't backwards
-        
+
         textLabels.Add(label);
 
+    }
+
+    [ContextMenu("Clean Up Editor Junk")]
+    public void CleanUpEditorJunk()
+    {
+#if UNITY_EDITOR
+        Debug.Log("🧹 Cleaning up old BoxColliders and TextMesh labels...");
+
+        // 1. Remove all BoxColliders attached to this GameObject
+        BoxCollider[] colliders = GetComponents<BoxCollider>();
+        foreach (var col in colliders)
+        {
+            DestroyImmediate(col);
+        }
+
+        // 2. Find all child objects with a TextMesh component and delete their GameObjects
+        TextMesh[] textMeshes = GetComponentsInChildren<TextMesh>(true);
+        foreach (var tm in textMeshes)
+        {
+            DestroyImmediate(tm.gameObject);
+        }
+
+        // 3. Optional: clear lingering label refs
+        textLabels.Clear();
+
+        // 4. Mark scene as dirty so Unity knows to save changes
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
+
+        Debug.Log("✅ Editor junk cleared.");
+#endif
     }
 
 }
