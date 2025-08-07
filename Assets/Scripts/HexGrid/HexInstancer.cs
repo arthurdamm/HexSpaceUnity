@@ -143,6 +143,11 @@ public class HexInstancer : MonoBehaviour
         RebuildGrid(false); // re-bake the matrices
     }
 
+    public bool TryGetWorldPosition(Vector2Int axial, out Vector3 pos)
+    {
+        return axialToWorld.TryGetValue(axial, out pos);
+    }
+    
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
