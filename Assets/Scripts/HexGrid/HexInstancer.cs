@@ -96,12 +96,31 @@ public class HexInstancer : MonoBehaviour
 
     }
 
+    // void AddBoundingBoxCollider(GameObject hexGridRoot)
+    // {
+    //     Debug.Log($"h:{gridHeight()} w:{gridWidth()}");
+    //     BoxCollider collider = hexGridRoot.AddComponent<BoxCollider>();
+    //     collider.size = new Vector3(2 * gridHeight(), 0.001f, 2 * gridWidth()); // Thin Y-axis so it doesn't interfere vertically
+    //     collider.center = Vector3.zero; // Centered at grid origin
+    //     collider.isTrigger = false;
+    // }
+
     void AddBoundingBoxCollider(GameObject hexGridRoot)
     {
-        Debug.Log($"h:{gridHeight()} w:{gridWidth()}");
+        if (hexGridRoot.TryGetComponent<BoxCollider>(out var existingCollider))
+        {
+    #if UNITY_EDITOR
+            DestroyImmediate(existingCollider);
+    #else
+            Destroy(existingCollider);
+    #endif
+        }
+
+        Debug.Log($"Adding BoxCollider → h:{gridHeight()} w:{gridWidth()}");
+
         BoxCollider collider = hexGridRoot.AddComponent<BoxCollider>();
-        collider.size = new Vector3(2 * gridHeight(), 0.001f, 2 * gridWidth()); // Thin Y-axis so it doesn't interfere vertically
-        collider.center = new Vector3(0f, 0f, 0f); // Centered at grid origin
+        collider.size = new Vector3(2 * gridHeight(), 0.001f, 2 * gridWidth());
+        collider.center = Vector3.zero;
         collider.isTrigger = false;
     }
 
@@ -147,7 +166,7 @@ public class HexInstancer : MonoBehaviour
     {
         return axialToWorld.TryGetValue(axial, out pos);
     }
-    
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -181,22 +200,55 @@ public class HexInstancer : MonoBehaviour
         return config.hexSize * (2 + 3 * config.gridRadius / 2);
     }
 
+    // private void CreateDebugLabel(Vector3 position, int q, int r)
+    // {
+    //     if (textLabelPrefab == null) return;
+
+    //     GameObject label = Instantiate(textLabelPrefab, position + Vector3.up * 0.05f, Quaternion.identity, transform);
+    //     label.GetComponent<TextMesh>().text = $"({q},{r})";
+    //     label.GetComponent<TextMesh>().fontSize = 20;
+    //     label.GetComponent<TextMesh>().characterSize = 0.1f;
+    //     label.GetComponent<TextMesh>().color = Color.white;
+
+        
+    //     label.transform.Rotate(90, 0, 0); // So text isn't backwards
+
+    //     textLabels.Add(label);
+
+    // }
+
     private void CreateDebugLabel(Vector3 position, int q, int r)
     {
         if (textLabelPrefab == null) return;
 
+        string labelName = $"DebugLabel_{q}_{r}";
+
+        // Check if label already exists
+        Transform existing = transform.Find(labelName);
+        if (existing != null)
+        {
+#if UNITY_EDITOR
+            DestroyImmediate(existing.gameObject);
+#else
+        Destroy(existing.gameObject);
+#endif
+        }
+
         GameObject label = Instantiate(textLabelPrefab, position + Vector3.up * 0.05f, Quaternion.identity, transform);
-        label.GetComponent<TextMesh>().text = $"({q},{r})";
-        label.GetComponent<TextMesh>().fontSize = 20;
-        label.GetComponent<TextMesh>().characterSize = 0.1f;
-        label.GetComponent<TextMesh>().color = Color.white;
+        label.name = labelName;
+
+        var text = label.GetComponent<TextMesh>();
+        text.text = $"({q},{r})";
+        text.fontSize = 20;
+        text.characterSize = 0.1f;
+        text.color = Color.white;
 
         // label.transform.LookAt(Camera.main.transform);
-        label.transform.Rotate(90, 0, 0); // So text isn't backwards
+        label.transform.Rotate(90, 0, 0);
 
         textLabels.Add(label);
-
     }
+
 
     [ContextMenu("Clean Up Editor Junk")]
     public void CleanUpEditorJunk()
