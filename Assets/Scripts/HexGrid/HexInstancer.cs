@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-// using System.Numerics;
 
+[ExecuteAlways]
 public class HexInstancer : MonoBehaviour
 {
     public HexConfig config;
@@ -13,28 +13,14 @@ public class HexInstancer : MonoBehaviour
     public GameObject textLabelPrefab;
     private List<Matrix4x4> matrices = new List<Matrix4x4>();
 
+    void OnEnable()
+    {
+       
+    }
+
     void Start()
     {
-        if (config == null)
-        {
-            Debug.LogError("HexGridGenerator: no config");
-            return;
-        }
-
-        hexWidth = (float)Math.Sqrt(3) * config.hexSize;
-
-        for (int q = -config.gridRadius; q <= config.gridRadius; q++)
-        {
-            int r1 = Mathf.Max(-config.gridRadius, -q - config.gridRadius);
-            int r2 = Mathf.Min(config.gridRadius, -q + config.gridRadius);
-            for (int r = r1; r <= r2; r++)
-            {
-                Vector3 pos = HexSpace.Utils.HexMath.AxialToWorld(q, r, config.hexSize); 
-                Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
-                matrices.Add(mat);
-                CreateDebugLabel(pos, q, r);
-            }
-        }
+        RebuildGrid();
         AddBoundingBoxCollider(this.gameObject);
     }
 
@@ -48,10 +34,39 @@ public class HexInstancer : MonoBehaviour
         }
     }
 
+    public void RebuildGrid()
+    {
+        if (config == null)
+        {
+            Debug.LogError("HexGridGenerator: no config");
+            return;
+        }
+
+        matrices.Clear();
+
+        float hexSize = config.hexSize;
+        int radius = config.gridRadius;
+        hexWidth = hexSize * (float)Math.Sqrt(3);
+
+        for (int q = -radius; q <= radius; q++)
+        {
+            int r1 = Mathf.Max(-radius, -q - radius);
+            int r2 = Mathf.Min(radius, -q + radius);
+            for (int r = r1; r <= r2; r++)
+            {
+                Vector3 pos = HexSpace.Utils.HexMath.AxialToWorld(q, r, hexSize);
+                Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
+                matrices.Add(mat);
+                CreateDebugLabel(pos, q, r);
+            }
+        }
+    }
+
     void AddBoundingBoxCollider(GameObject hexGridRoot)
     {
+        Debug.Log($"h:{gridHeight()} w:{gridWidth()}");
         BoxCollider collider = hexGridRoot.AddComponent<BoxCollider>();
-        collider.size = new Vector3(2*gridHeight(), 0.001f, 2*gridWidth()); // Thin Y-axis so it doesn't interfere vertically
+        collider.size = new Vector3(2 * gridHeight(), 0.001f, 2 * gridWidth()); // Thin Y-axis so it doesn't interfere vertically
         collider.center = new Vector3(0f, 0f, 0f); // Centered at grid origin
         collider.isTrigger = false;
     }
@@ -76,7 +91,7 @@ public class HexInstancer : MonoBehaviour
 
         Gizmos.color = Color.black;
         Gizmos.DrawLine(new Vector3(0f, .1f, 0f), new Vector3(0f, .1f, gridWidth()));
-        
+
     }
 
     public float gridHeight()
