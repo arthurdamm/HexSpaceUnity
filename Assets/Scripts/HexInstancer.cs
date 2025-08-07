@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+// using System.Numerics;
 
 public class HexInstancer : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class HexInstancer : MonoBehaviour
     public float hexSize = 1f;
     private float hexWidth;
     public int gridRadius = 3;
+
+    public GameObject textLabelPrefab;
+
 
     private List<Matrix4x4> matrices = new List<Matrix4x4>();
 
@@ -26,9 +30,10 @@ public class HexInstancer : MonoBehaviour
                 Vector3 pos = AxialToWorld(q, r);
                 Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one * hexSize);
                 matrices.Add(mat);
+                CreateDebugLabel(pos, q, r);
             }
         }
-        AddBoundingBoxCollider(this.gameObject, hexSize, gridRadius);
+        AddBoundingBoxCollider(this.gameObject);
     }
 
     public float gridHeight()
@@ -39,6 +44,21 @@ public class HexInstancer : MonoBehaviour
     public float gridWidth()
     {
         return (gridRadius + .5f) * hexWidth;
+    }
+
+    void CreateDebugLabel(Vector3 position, int q, int r)
+    {
+        if (textLabelPrefab == null) return;
+
+        GameObject label = Instantiate(textLabelPrefab, position + Vector3.up * 0.05f, Quaternion.identity, transform);
+        label.GetComponent<TextMesh>().text = $"({q},{r})";
+        label.GetComponent<TextMesh>().fontSize = 20;
+        label.GetComponent<TextMesh>().characterSize = 0.1f;
+        label.GetComponent<TextMesh>().color = Color.white;
+
+        // Optional: always face camera
+        // label.transform.LookAt(Camera.main.transform);
+        label.transform.Rotate(90, 90, 0); // So text isn't backwards
     }
 
     void OnDrawGizmos()
@@ -80,14 +100,12 @@ public class HexInstancer : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 
-    void AddBoundingBoxCollider(GameObject hexGridRoot, float hexSize, int radius)
+    void AddBoundingBoxCollider(GameObject hexGridRoot)
     {
-        float width = hexSize * 3f * radius;
-        float height = hexSize * Mathf.Sqrt(3f) * (2f * radius + 1f);
-
         BoxCollider collider = hexGridRoot.AddComponent<BoxCollider>();
         collider.size = new Vector3(2*gridHeight(), 0.1f, 2*gridWidth()); // Thin Y-axis so it doesn't interfere vertically
         collider.center = new Vector3(0f, 0f, 0f); // Centered at grid origin
+        collider.isTrigger = false;
         Debug.Log("AddBoundingBoxCollider");
     }
 }
