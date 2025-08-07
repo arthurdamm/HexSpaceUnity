@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 183352204}
   - component: {fileID: 183352208}
   - component: {fileID: 183352207}
+  - component: {fileID: 183352209}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -206,13 +207,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 183352203}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &183352207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +272,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   lookSpeed: 100
+--- !u!114 &183352209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 183352203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 960a08e27f51448ceb08162284fbf3d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1711626133
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,6 +295,7 @@ GameObject:
   - component: {fileID: 1711626135}
   - component: {fileID: 1711626134}
   - component: {fileID: 1711626136}
+  - component: {fileID: 1711626137}
   m_Layer: 0
   m_Name: HexGrid
   m_TagString: Untagged
@@ -301,11 +315,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37da08269f292429da97c60b968f4415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: 0e2eaf8b53bf74ce6b873eb1d4cc0043, type: 2}
   hexMesh: {fileID: 2190622540023885545, guid: 988ef071e95ab4d659eab791d961056d, type: 3}
   innerMaterial: {fileID: 2100000, guid: b74a0e95db57045ea9919eb60ba87381, type: 2}
   borderMaterial: {fileID: 2100000, guid: ba25db55841a44309a74dc3c732f07df, type: 2}
-  hexSize: 1
-  gridRadius: 3
   textLabelPrefab: {fileID: 8101820208890379224, guid: b6eb9b5d772cb43348d4bb3ff0df58c5, type: 3}
 --- !u!4 &1711626135
 Transform:
@@ -335,6 +348,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 183352205}
+--- !u!114 &1711626137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711626133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f28cfe8ca5154400a743ce269a47a72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hexSize: 1
+  gridRadius: 75
 --- !u!1 &1881428543
 GameObject:
   m_ObjectHideFlags: 0
