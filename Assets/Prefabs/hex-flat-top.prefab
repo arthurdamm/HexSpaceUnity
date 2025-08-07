@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8827752393876822571}
   - component: {fileID: 6565235359402456217}
   m_Layer: 0
-  m_Name: hex-unity
+  m_Name: hex-flat-top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

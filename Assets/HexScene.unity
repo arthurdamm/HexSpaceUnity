@@ -281,6 +281,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1711626135}
   - component: {fileID: 1711626134}
+  - component: {fileID: 1711626136}
   m_Layer: 0
   m_Name: HexGrid
   m_TagString: Untagged
@@ -300,11 +301,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37da08269f292429da97c60b968f4415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexMesh: {fileID: 2190622540023885545, guid: 919d64c36e06f4f1fbac6a84c9f7b009, type: 3}
-  innerMaterial: {fileID: 2100000, guid: 93c4cf0cb03ee47e2a998315e470bb98, type: 2}
-  borderMaterial: {fileID: 2100000, guid: 24308496b3bb54a6a966381c04731f8e, type: 2}
+  hexMesh: {fileID: 2190622540023885545, guid: 988ef071e95ab4d659eab791d961056d, type: 3}
+  innerMaterial: {fileID: 2100000, guid: b74a0e95db57045ea9919eb60ba87381, type: 2}
+  borderMaterial: {fileID: 2100000, guid: ba25db55841a44309a74dc3c732f07df, type: 2}
   hexSize: 1
-  gridRadius: 2
+  gridRadius: 3
+  textLabelPrefab: {fileID: 8101820208890379224, guid: b6eb9b5d772cb43348d4bb3ff0df58c5, type: 3}
 --- !u!4 &1711626135
 Transform:
   m_ObjectHideFlags: 0
@@ -320,6 +322,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1711626136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711626133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e8890217549247c3b90f688826b4cc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 183352205}
 --- !u!1 &1881428543
 GameObject:
   m_ObjectHideFlags: 0

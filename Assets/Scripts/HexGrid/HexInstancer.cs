@@ -5,10 +5,11 @@ using System;
 
 public class HexInstancer : MonoBehaviour
 {
+    public HexConfig config;
     public Mesh hexMesh;
     public Material innerMaterial;
     public Material borderMaterial;
-    public float hexSize = 1f;
+    [SerializeField] public float hexSize = 1f;
     private float hexWidth;
     public int gridRadius = 3;
 
@@ -19,16 +20,22 @@ public class HexInstancer : MonoBehaviour
 
     void Start()
     {
+        if (config == null)
+        {
+            Debug.LogError("HexGridGenerator: no config");
+            return;
+        }
+
         hexWidth = (float)Math.Sqrt(3) * hexSize;
 
-        for (int q = -gridRadius; q <= gridRadius; q++)
+        for (int q = -config.gridRadius; q <= config.gridRadius; q++)
         {
-            int r1 = Mathf.Max(-gridRadius, -q - gridRadius);
-            int r2 = Mathf.Min(gridRadius, -q + gridRadius);
+            int r1 = Mathf.Max(-config.gridRadius, -q - config.gridRadius);
+            int r2 = Mathf.Min(config.gridRadius, -q + config.gridRadius);
             for (int r = r1; r <= r2; r++)
             {
-                Vector3 pos = AxialToWorld(q, r);
-                Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one * hexSize);
+                Vector3 pos = HexSpace.Utils.HexMath.AxialToWorld(q, r, config.hexSize); 
+                Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
                 matrices.Add(mat);
                 CreateDebugLabel(pos, q, r);
             }
@@ -36,30 +43,7 @@ public class HexInstancer : MonoBehaviour
         AddBoundingBoxCollider(this.gameObject);
     }
 
-    public float gridHeight()
-    {
-        return hexSize * (1 + 3 * gridRadius / 2);
-    }
-
-    public float gridWidth()
-    {
-        return (gridRadius + .5f) * hexWidth;
-    }
-
-    void CreateDebugLabel(Vector3 position, int q, int r)
-    {
-        if (textLabelPrefab == null) return;
-
-        GameObject label = Instantiate(textLabelPrefab, position + Vector3.up * 0.05f, Quaternion.identity, transform);
-        label.GetComponent<TextMesh>().text = $"({q},{r})";
-        label.GetComponent<TextMesh>().fontSize = 20;
-        label.GetComponent<TextMesh>().characterSize = 0.1f;
-        label.GetComponent<TextMesh>().color = Color.white;
-
-        // Optional: always face camera
-        // label.transform.LookAt(Camera.main.transform);
-        label.transform.Rotate(90, 90, 0); // So text isn't backwards
-    }
+    
 
     void OnDrawGizmos()
     {
@@ -93,19 +77,36 @@ public class HexInstancer : MonoBehaviour
         }
     }
 
-    Vector3 AxialToWorld(int q, int r)
-    {
-        float x = hexSize * 3f / 2f * q;
-        float z = hexSize * Mathf.Sqrt(3f) * (r + q / 2f);
-        return new Vector3(x, 0, z);
-    }
-
     void AddBoundingBoxCollider(GameObject hexGridRoot)
     {
         BoxCollider collider = hexGridRoot.AddComponent<BoxCollider>();
-        collider.size = new Vector3(2*gridHeight(), 0.1f, 2*gridWidth()); // Thin Y-axis so it doesn't interfere vertically
+        collider.size = new Vector3(2*gridHeight(), 0.001f, 2*gridWidth()); // Thin Y-axis so it doesn't interfere vertically
         collider.center = new Vector3(0f, 0f, 0f); // Centered at grid origin
         collider.isTrigger = false;
         Debug.Log("AddBoundingBoxCollider");
     }
+    public float gridHeight()
+    {
+        return (config.gridRadius + .5f) * hexWidth;
+    }
+
+    public float gridWidth()
+    {
+        return config.hexSize * (2 + 3 * config.gridRadius / 2);
+    }
+
+    private void CreateDebugLabel(Vector3 position, int q, int r)
+    {
+        if (textLabelPrefab == null) return;
+
+        GameObject label = Instantiate(textLabelPrefab, position + Vector3.up * 0.05f, Quaternion.identity, transform);
+        label.GetComponent<TextMesh>().text = $"({q},{r})";
+        label.GetComponent<TextMesh>().fontSize = 20;
+        label.GetComponent<TextMesh>().characterSize = 0.1f;
+        label.GetComponent<TextMesh>().color = Color.white;
+
+        // label.transform.LookAt(Camera.main.transform);
+        label.transform.Rotate(90, 0, 0); // So text isn't backwards
+    }
+
 }

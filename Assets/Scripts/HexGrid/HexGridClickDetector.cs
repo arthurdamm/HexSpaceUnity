@@ -1,0 +1,22 @@
+using UnityEngine;
+
+public class HexGridClickDetector : MonoBehaviour
+{
+    public Camera cam;  // Assign in inspector or via script
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                Vector2Int axial = HexSpace.Utils.HexMath.WorldToAxial(hit.point, 1f);
+                // Debug.Log($"Axial is : {axial}");
+                Debug.Log($"Convert {hit.point} to Axial: {axial}");
+                // TODO: Convert hit.point to axial coords
+            }
+        }
+    }
+}
