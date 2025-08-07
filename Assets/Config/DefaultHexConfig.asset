@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: DefaultHexConfig
   m_EditorClassIdentifier: 
   hexSize: 1
-  gridRadius: 2
+  gridRadius: 1
