@@ -96,3 +96,20 @@ GeneratedInputs/
 # =================== #
 /*.user
 /*.userprefs
+
+# Package Assets
+Assets/3D Sprite Sci-Fi Props/
+Assets/3D_Sci-fi_Spaceships_edit_Pack07f/
+Assets/3D_Sci-fi_asteroid_belt_group_01/
+Assets/FlexUnit/
+Assets/InfinityPBR - Magic Pig Games/
+Assets/Omega_fighterG/
+Assets/ParallelCascades/
+Assets/Sci-Fi SFX/
+Assets/Sci-Fi UI/
+Assets/Sci-FiSpaceFighterPBR/
+Assets/ShubhamPublishing/
+Assets/StarSparrow/
+Assets/TextMesh Pro/
+Assets/Vefects/
+Assets/*.meta

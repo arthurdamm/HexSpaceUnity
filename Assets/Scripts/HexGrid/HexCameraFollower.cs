@@ -6,6 +6,7 @@ public class HexCameraFollower : MonoBehaviour
     public float snapDistance = 0.01f;
     public float height = 10f;
     public float pitchAngle = 60f; // Tilt downward
+    public float backDistance = 3f;
 
     private Vector3 targetPosition;
     private bool shouldFollow = false;
@@ -35,7 +36,7 @@ public class HexCameraFollower : MonoBehaviour
     public void CenterOnHex(Vector3 hexCenter)
     {
         // Position camera above the hex and apply a pitch rotation
-        targetPosition = hexCenter + Vector3.up * height;
+        targetPosition = hexCenter + Vector3.up * height + Vector3.back * backDistance;
 
         // Immediately rotate camera to look down at hex
         transform.rotation = Quaternion.Euler(pitchAngle, 0f, 0f);

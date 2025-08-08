@@ -5,6 +5,7 @@ public class HexGridClickDetector : MonoBehaviour
     public Camera cam;  // Assign in inspector or via script
     public HexInstancer grid;
     public HexCameraFollower cameraFollower;
+    public HexConfig config;
 
 
     void Update()
@@ -15,7 +16,7 @@ public class HexGridClickDetector : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Vector2Int axial = HexSpace.Utils.HexMath.WorldToAxial(hit.point, 1f);
+                Vector2Int axial = HexSpace.Utils.HexMath.WorldToAxial(hit.point, config.hexSize);
                 Debug.Log($"Hit Point convert {hit.point} to Axial: {axial}");
                 grid.ToggleHighlight(axial);
 

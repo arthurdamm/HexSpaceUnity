@@ -76,7 +76,7 @@ public class HexInstancer : MonoBehaviour
                 Vector2Int axial = new(q, r);
                 Vector3 pos = HexSpace.Utils.HexMath.AxialToWorld(q, r, hexSize);
                 axialToWorld[axial] = pos;
-                Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one);
+                Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one * hexSize); // optimize: prescale?
 
                 if (highlighted.Contains(axial))
                 {
@@ -95,15 +95,6 @@ public class HexInstancer : MonoBehaviour
         }
 
     }
-
-    // void AddBoundingBoxCollider(GameObject hexGridRoot)
-    // {
-    //     Debug.Log($"h:{gridHeight()} w:{gridWidth()}");
-    //     BoxCollider collider = hexGridRoot.AddComponent<BoxCollider>();
-    //     collider.size = new Vector3(2 * gridHeight(), 0.001f, 2 * gridWidth()); // Thin Y-axis so it doesn't interfere vertically
-    //     collider.center = Vector3.zero; // Centered at grid origin
-    //     collider.isTrigger = false;
-    // }
 
     void AddBoundingBoxCollider(GameObject hexGridRoot)
     {
@@ -126,6 +117,8 @@ public class HexInstancer : MonoBehaviour
 
     void Update()
     {
+
+
         for (int i = 0, j = 0; i < defaultMatrices.Count; i += 1023, j++)
         {
             int count = Mathf.Min(1023, defaultMatrices.Count - i);
@@ -146,6 +139,9 @@ public class HexInstancer : MonoBehaviour
             Graphics.DrawMeshInstanced(hexMesh, 0, innerMaterial, testMatrices.GetRange(i, count));
             Graphics.DrawMeshInstanced(hexMesh, 1, borderHighlightMaterial, testMatrices.GetRange(i, count));
         }
+#if UNITY_EDITOR
+            if (!Application.isPlaying) return; // no need to render every frame in edit mode
+#endif
     }
 
     public void ToggleHighlight(Vector2Int axial)
@@ -200,23 +196,6 @@ public class HexInstancer : MonoBehaviour
         return config.hexSize * (2 + 3 * config.gridRadius / 2);
     }
 
-    // private void CreateDebugLabel(Vector3 position, int q, int r)
-    // {
-    //     if (textLabelPrefab == null) return;
-
-    //     GameObject label = Instantiate(textLabelPrefab, position + Vector3.up * 0.05f, Quaternion.identity, transform);
-    //     label.GetComponent<TextMesh>().text = $"({q},{r})";
-    //     label.GetComponent<TextMesh>().fontSize = 20;
-    //     label.GetComponent<TextMesh>().characterSize = 0.1f;
-    //     label.GetComponent<TextMesh>().color = Color.white;
-
-        
-    //     label.transform.Rotate(90, 0, 0); // So text isn't backwards
-
-    //     textLabels.Add(label);
-
-    // }
-
     private void CreateDebugLabel(Vector3 position, int q, int r)
     {
         if (textLabelPrefab == null) return;
@@ -240,7 +219,7 @@ public class HexInstancer : MonoBehaviour
         var text = label.GetComponent<TextMesh>();
         text.text = $"({q},{r})";
         text.fontSize = 20;
-        text.characterSize = 0.1f;
+        text.characterSize = 0.1f * config.hexSize;
         text.color = Color.white;
 
         // label.transform.LookAt(Camera.main.transform);
