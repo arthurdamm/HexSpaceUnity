@@ -22,7 +22,7 @@ public readonly struct SelectionArgs
     public SelectionArgs(
         Vector3 worldPoint,
         Vector2 screenPoint,
-        RaycastHit? hit,
+        RaycastHit hit,
         bool isAdditive,
         bool isAlt,
         int mouseButton,
@@ -45,7 +45,7 @@ public readonly struct SelectionArgs
 
     public Vector3 WorldPoint { get; }
     public Vector2 ScreenPoint { get; }
-    public RaycastHit? Hit { get; }
+    public RaycastHit Hit { get; }
     public bool IsAdditive { get; }   // e.g., Shift
     public bool IsAlt { get; }        // e.g., Ctrl/Alt for special select
     public int MouseButton { get; }   // 0=LMB, 1=RMB, etc.

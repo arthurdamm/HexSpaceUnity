@@ -27,7 +27,7 @@ public class InputRouter : MonoBehaviour
                 var screen = (Vector2)Input.mousePosition;
                 var add = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
                 var alt = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-                
+
                 Vector2Int? axial = null;
                 Vector3? hexCenter = null;
                 if (TryResolveHexFromHit(hit, out var hexResult))
@@ -39,15 +39,13 @@ public class InputRouter : MonoBehaviour
                 var args = new SelectionArgs(
                     world, screen, hit, add, alt, mouseButton: 0, mainCamera, axial, hexCenter, source: this);
 
-                if (hit.collider.GetComponentInParent<ISelectable>() is { } sel)
-                    SelectionManager.Select(sel, in args);
-
                 if (hit.collider.GetComponentInParent<ISelectable>() is { } selectable)
                 {
                     Debug.Log($"FOUND SELECTABLE: {selectable.GetSelectableName()}");
-                    selectable.OnSelected(args);
+                    SelectionManager.Select(selectable, in args);
+
                 }
-                debugCollider(hit);
+                // debugCollider(hit);
                 
             }
         }
