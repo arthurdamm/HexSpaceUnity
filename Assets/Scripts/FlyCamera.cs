@@ -30,6 +30,5 @@ public class FlyCamera : MonoBehaviour
 
         transform.position += direction.normalized * movementSpeed * Time.deltaTime;
 
-        Debug.Log("Flying"); // Add this line to check if Update() is firing
     }
 }

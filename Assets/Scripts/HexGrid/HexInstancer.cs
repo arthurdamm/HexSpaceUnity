@@ -9,14 +9,13 @@ using UnityEditor;
 [ExecuteAlways]
 public class HexInstancer : MonoBehaviour
 {
-    public HexConfig config;
     public Mesh hexMesh;
     public Material innerMaterial;
     public Material borderMaterial;
     public Material borderHighlightMaterial;
 
     public GameObject textLabelPrefab;
-    private float hexWidth;
+    private float hexWidth = 1f;
     private List<Matrix4x4> defaultMatrices = new List<Matrix4x4>();
     private List<Matrix4x4> highlightMatrices = new();
     private List<Matrix4x4> testMatrices = new();
@@ -32,11 +31,6 @@ public class HexInstancer : MonoBehaviour
         AddBoundingBoxCollider(this.gameObject);
     }
 
-    void Start()
-    {
-
-    }
-
     public void RebuildGrid(bool showLabel = true)
     {
         // Clean up existing labels
@@ -46,25 +40,22 @@ public class HexInstancer : MonoBehaviour
             {
                 if (label != null)
                 {
-                    Destroy(label); // Immediate because we're in edit mode
+    #if UNITY_EDITOR
+                    DestroyImmediate(label);
+    #else
+                    Destroy(label);
+    #endif
                 }
             }
             textLabels.Clear();
-        }
-
-
-        if (config == null)
-        {
-            Debug.LogError("HexGridGenerator: no config");
-            return;
         }
 
         defaultMatrices.Clear();
         highlightMatrices.Clear();
         axialToWorld.Clear();
 
-        float hexSize = config.hexSize;
-        int gridRadius = config.gridRadius;
+        float hexSize = HexSettings.HexSize;
+        int gridRadius = HexSettings.GridRadius;
         hexWidth = hexSize * (float)Math.Sqrt(3);
 
         for (int q = -gridRadius; q <= gridRadius; q++)
@@ -74,7 +65,7 @@ public class HexInstancer : MonoBehaviour
             for (int r = r1; r <= r2; r++)
             {
                 Vector2Int axial = new(q, r);
-                Vector3 pos = HexSpace.Utils.HexMath.AxialToWorld(q, r, hexSize);
+                Vector3 pos = GameHex.AxialToWorld(q, r);
                 axialToWorld[axial] = pos;
                 Matrix4x4 mat = Matrix4x4.TRS(pos, Quaternion.identity, Vector3.one * hexSize); // optimize: prescale?
 
@@ -188,12 +179,12 @@ public class HexInstancer : MonoBehaviour
 
     public float gridHeight()
     {
-        return (config.gridRadius + .5f) * hexWidth;
+        return (HexSettings.GridRadius + .5f) * hexWidth;
     }
 
     public float gridWidth()
     {
-        return config.hexSize * (2 + 3 * config.gridRadius / 2);
+        return HexSettings.HexSize * (2 + 3 * HexSettings.GridRadius / 2);
     }
 
     private void CreateDebugLabel(Vector3 position, int q, int r)
@@ -219,7 +210,7 @@ public class HexInstancer : MonoBehaviour
         var text = label.GetComponent<TextMesh>();
         text.text = $"({q},{r})";
         text.fontSize = 20;
-        text.characterSize = 0.1f * config.hexSize;
+        text.characterSize = 0.1f * HexSettings.HexSize;
         text.color = Color.white;
 
         // label.transform.LookAt(Camera.main.transform);

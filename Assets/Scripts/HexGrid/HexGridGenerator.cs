@@ -17,7 +17,7 @@ public class HexGridGenerator : MonoBehaviour
             int r2 = Mathf.Min(config.gridRadius, -q + config.gridRadius);
             for (int r = r1; r <= r2; r++)
             {
-                Vector3 pos = HexSpace.Utils.HexMath.AxialToWorld(q, r, config.hexSize);
+                Vector3 pos = GameHex.AxialToWorld(q, r);
                 Instantiate(hexPrefab, pos, Quaternion.identity, transform);
             }
         }

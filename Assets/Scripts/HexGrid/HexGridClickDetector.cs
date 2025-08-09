@@ -1,30 +1,30 @@
 using UnityEngine;
 
-public class HexGridClickDetector : MonoBehaviour
+public class HexGridClickDetector : MonoBehaviour, ISelectable
 {
     public Camera cam;  // Assign in inspector or via script
     public HexInstancer grid;
     public HexCameraFollower cameraFollower;
-    public HexConfig config;
 
-
-    void Update()
+    public string GetSelectableName()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                Vector2Int axial = HexSpace.Utils.HexMath.WorldToAxial(hit.point, config.hexSize);
-                Debug.Log($"Hit Point convert {hit.point} to Axial: {axial}");
-                grid.ToggleHighlight(axial);
-
-                if (grid.TryGetWorldPosition(axial, out Vector3 hexCenter))
-                {
-                    cameraFollower.CenterOnHex(hexCenter);
-                }
-            }
-        }
+        return "HexGridClickDetector";
     }
+
+    public bool OnDeselected()
+    {
+        return true;
+    }
+
+    public bool OnSelected(in SelectionArgs args)
+    {
+        if (args.Axial == null || args.HexCenter == null)
+        {
+            return false;
+        }
+        grid.ToggleHighlight((Vector2Int)args.Axial);
+        cameraFollower.CenterOnHex((Vector3)args.HexCenter);
+        return true;
+    }
+
 }

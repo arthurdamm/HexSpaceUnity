@@ -4,7 +4,7 @@ public class HexCameraFollower : MonoBehaviour
 {
     public float followSpeed = 5f;
     public float snapDistance = 0.01f;
-    public float height = 10f;
+    public float height = 1f;
     public float pitchAngle = 60f; // Tilt downward
     public float backDistance = 3f;
 
@@ -13,6 +13,7 @@ public class HexCameraFollower : MonoBehaviour
 
     void Start()
     {
+        height = HexSettings.HexSize * 6;
         targetPosition = transform.position;
     }
 
