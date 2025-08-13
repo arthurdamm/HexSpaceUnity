@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class InputRouter : MonoBehaviour
@@ -8,6 +7,7 @@ public class InputRouter : MonoBehaviour
 
     [SerializeField] private HexInstancer grid;
 
+    [Tooltip("Click a ship to select; then click a hex to move the selected ship to that hex center.")]
     // [SerializeField] private HexGridController hexGrid;
 
     void Awake()
@@ -39,14 +39,21 @@ public class InputRouter : MonoBehaviour
                 var args = new SelectionArgs(
                     world, screen, hit, add, alt, mouseButton: 0, mainCamera, axial, hexCenter, source: this);
 
+                // If a ship is selected and we clicked a hex on the grid, issue a move and stop.
+                Debug.Log($"LAYER {IsOnLayer(hit.collider.gameObject, gridLayer)}");
+                if (ShipUnit.Selected != null && axial.HasValue && hexCenter.HasValue && IsOnLayer(hit.collider.gameObject, gridLayer))
+                {
+                    Debug.Log("MOVING SHIP");
+                    ShipUnit.Selected.CommandMove(axial.Value, hexCenter.Value + Vector3.up * 5);
+                    return; // do not let this click fall through to selection
+                }
+
                 if (hit.collider.GetComponentInParent<ISelectable>() is { } selectable)
                 {
                     Debug.Log($"FOUND SELECTABLE: {selectable.GetSelectableName()}");
                     SelectionManager.Select(selectable, in args);
-
                 }
                 // debugCollider(hit);
-                
             }
         }
 
@@ -96,5 +103,8 @@ public class InputRouter : MonoBehaviour
         Debug.Log("Parent: " + hit.collider.transform.parent?.name);
 
     }
+    private static bool IsOnLayer(GameObject go, LayerMask mask)
+    {
+        return (mask.value & (1 << go.layer)) != 0;
+    }
 }
-

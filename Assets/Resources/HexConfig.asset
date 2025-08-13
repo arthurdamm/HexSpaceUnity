@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c22d98944b2245fcba3e487b5ac50ae, type: 3}
   m_Name: HexConfig
   m_EditorClassIdentifier: Assembly-CSharp::HexConfig
-  hexSize: 1
-  gridRadius: 5
+  hexSize: 5
+  gridRadius: 3

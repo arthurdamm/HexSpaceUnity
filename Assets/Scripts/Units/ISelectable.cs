@@ -4,11 +4,13 @@ public interface ISelectable
 {
     /// <summary>
     /// Called when this object is selected by the player.
+    /// Return true if selection was accepted/consumed.
     /// </summary>
-    bool OnSelected(in SelectionArgs args); // 'in' already passes SelectionArgs as readonly ref
+    bool OnSelected(in SelectionArgs args); // 'in' passes SelectionArgs as readonly ref
 
     /// <summary>
     /// Called when this object is deselected (either another object is selected or selection is cleared).
+    /// Return true if it handled cleanup.
     /// </summary>
     bool OnDeselected();
 
@@ -17,6 +19,7 @@ public interface ISelectable
     /// </summary>
     string GetSelectableName();
 }
+
 public readonly struct SelectionArgs
 {
     public SelectionArgs(
