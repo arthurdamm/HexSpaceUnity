@@ -13,12 +13,12 @@ public class ShipUnit : MonoBehaviour, ISelectable
 
     [Header("Movement Tuning")]
     [Tooltip("World units per second along the path")]
-    public float MoveSpeed = 6f;
+    public float MoveSpeed = 20f;
     [Tooltip("Extra easing at the ends (0 = linear, 1 = strong ease)")]
     [Range(0f, 1f)] public float Ease = 0.25f;
 
-    // Minimal global selection for the demo loop
-    public static ShipUnit Selected { get; private set; }
+    // Event triggered when the ship arrives at its destination
+    public event System.Action<ShipUnit> Arrived;
 
     private bool _isMoving;
     private Coroutine _moveCo;
@@ -28,13 +28,11 @@ public class ShipUnit : MonoBehaviour, ISelectable
     public bool OnSelected(in SelectionArgs args)
     {
         Debug.Log($"Ship {ShipName} selected!");
-        Selected = this;
         return true;
     }
 
     public bool OnDeselected()
     {
-        if (Selected == this) Selected = null;
         return true;
     }
 
@@ -74,6 +72,8 @@ public class ShipUnit : MonoBehaviour, ISelectable
         transform.position = worldTarget; // snap to center
         _isMoving = false;
         _moveCo = null;
+
+        Arrived?.Invoke(this);
     }
 
     // Smoothstep-like adjustable ease-in/out

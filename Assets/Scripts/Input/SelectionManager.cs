@@ -207,8 +207,3 @@ public class SelectionManager : MonoBehaviour
     // Reusable temp list to avoid allocs
     private readonly List<ISelectable> _temp = new List<ISelectable>(8);
 }
-
-/// <summary>
-/// /////////////////////////////////////////////
-/// </summary>
-/// 

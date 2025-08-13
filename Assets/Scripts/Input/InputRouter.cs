@@ -41,10 +41,18 @@ public class InputRouter : MonoBehaviour
 
                 // If a ship is selected and we clicked a hex on the grid, issue a move and stop.
                 Debug.Log($"LAYER {IsOnLayer(hit.collider.gameObject, gridLayer)}");
-                if (ShipUnit.Selected != null && axial.HasValue && hexCenter.HasValue && IsOnLayer(hit.collider.gameObject, gridLayer))
+                if (axial.HasValue && hexCenter.HasValue && IsOnLayer(hit.collider.gameObject, gridLayer) && SelectionManager.TryGet<ShipUnit>(out var ship))
                 {
                     Debug.Log("MOVING SHIP");
-                    ShipUnit.Selected.CommandMove(axial.Value, hexCenter.Value + Vector3.up * 5);
+
+                    void OnArrived(ShipUnit u)
+                    {
+                        ship.Arrived -= OnArrived;
+                        SelectionManager.Instance.Clear();
+                    }
+                    ship.Arrived += OnArrived;
+
+                    ship.CommandMove(axial.Value, hexCenter.Value + Vector3.up * 3);
                     return; // do not let this click fall through to selection
                 }
 
