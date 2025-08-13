@@ -5,7 +5,7 @@ using UnityEngine;
 public class SelectionManager : MonoBehaviour
 {
     // Singleton
-    public static SelectionManager I { get; private set; }
+    public static SelectionManager Instance { get; private set; }
 
     // Current "focused" selection (last clicked)
     private ISelectable _current;
@@ -13,6 +13,7 @@ public class SelectionManager : MonoBehaviour
 
     // Selected set (for additive selection)
     private readonly HashSet<ISelectable> _selected = new HashSet<ISelectable>();
+    public IReadOnlyCollection<ISelectable> Selected => _selected;
 
     // Events
     public event Action<ISelectable, ISelectable, SelectionArgs> OnSelectionChanged; // (prevCurrent, newCurrent, args)
@@ -23,8 +24,8 @@ public class SelectionManager : MonoBehaviour
 
     private void Awake()
     {
-        if (I != null && I != this) { Destroy(gameObject); return; }
-        I = this;
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -97,7 +98,13 @@ public class SelectionManager : MonoBehaviour
     }
 
     /// <summary> Public static convenience wrapper. </summary>
-    public static void Select(ISelectable next, in SelectionArgs args) => I?.SelectInstance(next, in args);
+    public static void Select(ISelectable next, in SelectionArgs args) => Instance?.SelectInstance(next, in args);
+
+    public static bool TryGet<T>(out T value) where T : class, ISelectable
+    {
+        value = Instance?._current as T;
+        return value != null;
+    }
 
     /// <summary> Toggle selection membership for an item (useful with Ctrl/Alt). </summary>
     public void ToggleInstance(ISelectable item, in SelectionArgs args)
@@ -127,7 +134,7 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
-    public static void Toggle(ISelectable item, in SelectionArgs args) => I?.ToggleInstance(item, in args);
+    public static void Toggle(ISelectable item, in SelectionArgs args) => Instance?.ToggleInstance(item, in args);
 
     /// <summary> Deselect everything. </summary>
     public void Clear()
@@ -140,7 +147,6 @@ public class SelectionManager : MonoBehaviour
         OnSelectionCleared?.Invoke();
     }
 
-    public static void ClearSelection() => I?.Clear();
 
     // ---------------- internals ----------------
 
@@ -206,125 +212,3 @@ public class SelectionManager : MonoBehaviour
 /// /////////////////////////////////////////////
 /// </summary>
 /// 
-public class StandardSelectionManager : MonoBehaviour
-{
-    // Singleton instance
-    public static StandardSelectionManager I { get; private set; }
-
-    // Order early so it's ready before other scripts (optional)
-    // [DefaultExecutionOrder(-100)]
-
-    private ISelectable _current;
-    public ISelectable Current => _current;
-
-    // Optional: subscribe if you want UI to react to selection changes
-    public event Action<ISelectable, ISelectable, SelectionArgs> OnSelectionChanged;
-    public event Action OnSelectionCleared;
-
-    private void Awake()
-    {
-        if (I != null && I != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        I = this;
-        DontDestroyOnLoad(gameObject);
-    }
-
-    // var consumed = next.OnSelected(in args);
-    // if (!consumed && prev != null && !args.IsAdditive)
-    //     prev.OnDeselected();
-
-    public void _Select(ISelectable next, in SelectionArgs args)
-    {
-        if (next == null)
-        {
-            Clear();
-            return;
-        }
-
-        var prev = _current;
-
-        // Deselect previous if we're not doing additive selection
-        // Unity overloads == with potential false nulls on destroy, etc, use RefEq
-        if (prev != null && !ReferenceEquals(prev, next) && !args.IsAdditive)
-            prev.OnDeselected();
-
-        _current = next;
-        next.OnSelected(in args);
-
-        OnSelectionChanged?.Invoke(prev, _current, args);
-    }
-
-    public void Clear()
-    {
-        if (_current != null)
-        {
-            _current.OnDeselected();
-            _current = null;
-            OnSelectionCleared?.Invoke();
-        }
-    }
-
-    // Convenience wrappers so callers can do SelectionManager.Select(...)
-    public static void Select(ISelectable next, in SelectionArgs args) => I?._Select(next, in args);
-    public static void ClearSelection() => I?.Clear();
-}
-
-
-public class SimpleSelectionManager : MonoBehaviour
-{
-    private ISelectable _current;
-
-    public void Select(ISelectable next, in SelectionArgs args)
-    {
-        if (_current != null && !args.IsAdditive) _current.OnDeselected();
-        _current = next;
-        next.OnSelected(in args);
-    }
-
-    public void Clear()
-    {
-        _current?.OnDeselected();
-        _current = null;
-    }
-}
-
-public static class StaticSelectionManager
-{
-    private static ISelectable _current;
-    public static ISelectable Current => _current;
-
-    public static event Action<ISelectable, ISelectable, SelectionArgs> OnSelectionChanged;
-    public static event Action OnSelectionCleared;
-
-    public static void Select(ISelectable next, in SelectionArgs args)
-    {
-        if (next == null)
-        {
-            Clear();
-            return;
-        }
-
-        var prev = _current;
-
-        if (prev != null && !ReferenceEquals(prev, next) && !args.IsAdditive)
-            prev.OnDeselected();
-
-        _current = next;
-        next.OnSelected(in args);
-
-        OnSelectionChanged?.Invoke(prev, _current, args);
-    }
-
-    public static void Clear()
-    {
-        if (_current != null)
-        {
-            _current.OnDeselected();
-            _current = null;
-            OnSelectionCleared?.Invoke();
-        }
-    }
-}
