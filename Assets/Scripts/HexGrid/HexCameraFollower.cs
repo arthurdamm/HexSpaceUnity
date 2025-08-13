@@ -2,18 +2,20 @@ using UnityEngine;
 
 public class HexCameraFollower : MonoBehaviour
 {
-    public float followSpeed = 5f;
-    public float snapDistance = 0.01f;
-    public float height = 1f;
-    public float pitchAngle = 60f; // Tilt downward
-    public float backDistance = 3f;
+    [SerializeField] float followSpeed = 5f;
+    [SerializeField] float snapDistance = 0.01f;
+
+    [SerializeField] float heightMultiplier = 3f;
+    private float height = 1f;
+    [SerializeField] float pitchAngle = 60f; // Tilt downward
+    [SerializeField] float backDistance = 3f;
 
     private Vector3 targetPosition;
     private bool shouldFollow = false;
 
     void Start()
     {
-        height = HexSettings.HexSize * 6;
+        height = HexSettings.HexSize * heightMultiplier;
         targetPosition = transform.position;
     }
 

@@ -29,7 +29,7 @@ public class ShipUnit : MonoBehaviour, ISelectable
     void Start()
     {
         // Initialize rotation to match facing direction
-        // transform.rotation = Facing.GetRotation();
+        transform.rotation = Facing.GetRotation();
     }
 
     public string GetSelectableName() => ShipName;
