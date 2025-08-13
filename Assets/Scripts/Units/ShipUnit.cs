@@ -10,18 +10,27 @@ public class ShipUnit : MonoBehaviour, ISelectable
     [Header("Grid State")]
     public Vector2Int Axial; // current axial hex
     public int MovementPoints = 3;
+    public HexDirection Facing = HexDirection.East; // current facing direction
 
     [Header("Movement Tuning")]
     [Tooltip("World units per second along the path")]
     public float MoveSpeed = 20f;
     [Tooltip("Extra easing at the ends (0 = linear, 1 = strong ease)")]
     [Range(0f, 1f)] public float Ease = 0.25f;
+    [Tooltip("How fast the ship rotates (degrees per second)")]
+    public float RotationSpeed = 180f;
 
     // Event triggered when the ship arrives at its destination
     public event System.Action<ShipUnit> Arrived;
 
     private bool _isMoving;
     private Coroutine _moveCo;
+
+    void Start()
+    {
+        // Initialize rotation to match facing direction
+        // transform.rotation = Facing.GetRotation();
+    }
 
     public string GetSelectableName() => ShipName;
 
@@ -54,22 +63,44 @@ public class ShipUnit : MonoBehaviour, ISelectable
     {
         _isMoving = true;
 
-        Vector3 start = transform.position;
-        float distance = Vector3.Distance(start, worldTarget);
-        // Derive duration from distance and speed; clamp to avoid zero-duration
-        float duration = Mathf.Max(0.0001f, distance / Mathf.Max(0.001f, MoveSpeed));
+        // Calculate the direction we're moving
+        HexDirection moveDirection = HexDirectionExtensions.GetDirectionTo(Axial, targetAxial);
+        
+        Vector3 startPos = transform.position;
+        Quaternion startRotation = transform.rotation;
+        Quaternion targetRotation = moveDirection.GetRotation();
+
+        float distance = Vector3.Distance(startPos, worldTarget);
+        float moveDuration = Mathf.Max(0.0001f, distance / Mathf.Max(0.001f, MoveSpeed));
+        
+        // Calculate rotation duration based on angle difference
+        float angleDifference = Quaternion.Angle(startRotation, targetRotation);
+        float rotationDuration = angleDifference / RotationSpeed;
+        
+        // Use the longer of the two durations to ensure both complete
+        float totalDuration = Mathf.Max(moveDuration, rotationDuration);
 
         float t = 0f;
         while (t < 1f)
         {
-            t += Time.deltaTime / duration;
+            t += Time.deltaTime / totalDuration;
             float eased = ApplyEase(Mathf.Clamp01(t), Ease);
-            transform.position = Vector3.LerpUnclamped(start, worldTarget, eased);
+            
+            // Smoothly interpolate position
+            transform.position = Vector3.LerpUnclamped(startPos, worldTarget, eased);
+            
+            // Smoothly interpolate rotation
+            transform.rotation = Quaternion.LerpUnclamped(startRotation, targetRotation, eased);
+            
             yield return null;
         }
 
-        Axial = targetAxial; // commit logical position when we arrive
-        transform.position = worldTarget; // snap to center
+        // Commit final state
+        Axial = targetAxial;
+        Facing = moveDirection;
+        transform.position = worldTarget;
+        transform.rotation = targetRotation;
+        
         _isMoving = false;
         _moveCo = null;
 
@@ -82,5 +113,25 @@ public class ShipUnit : MonoBehaviour, ISelectable
         // base smoothstep
         float s = x * x * (3f - 2f * x);
         return Mathf.Lerp(x, s, ease);
+    }
+
+    /// <summary>
+    /// Immediately face a specific direction (useful for setup or instant turns)
+    /// </summary>
+    public void SetFacing(HexDirection direction)
+    {
+        if (!_isMoving)
+        {
+            Facing = direction;
+            transform.rotation = direction.GetRotation();
+        }
+    }
+
+    /// <summary>
+    /// Get the hex coordinate in the direction the ship is currently facing
+    /// </summary>
+    public Vector2Int GetHexInFront()
+    {
+        return Axial + Facing.GetAxialOffset();
     }
 }
