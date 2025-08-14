@@ -1,0 +1,7 @@
+{
+	"name": "HexSpace.Runtime",
+	  "references": [
+    "Unity.InputSystem",
+    "Unity.TextMeshPro"
+  ]
+}

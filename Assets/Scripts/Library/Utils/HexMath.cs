@@ -24,14 +24,14 @@ namespace HexSpace.Utils
         public static Vector3 AxialPointyTopToWorld(int q, int r, float hexSize)
         {
             float x = hexSize * Mathf.Sqrt(3f) * (q + r / 2f);
-            float z = hexSize * 3f / 2f * r;
+            float z = hexSize * 3f / 2f * -r;
             return new Vector3(x, 0, z);
         }
 
         public static Vector2Int WorldToAxialPointyTop(Vector3 worldPos, float hexSize)
         {
-            float q = (Mathf.Sqrt(3f) / 3f * worldPos.x - 1f / 3f * worldPos.z) / hexSize;
-            float r = (2f / 3f * worldPos.z) / hexSize;
+            float q = (Mathf.Sqrt(3f) / 3f * worldPos.x - 1f / 3f * -worldPos.z) / hexSize;
+            float r = (2f / 3f * -worldPos.z) / hexSize;
 
             return AxialPointyTopRoundBranchless(q, r);
         }

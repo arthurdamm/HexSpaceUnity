@@ -36,7 +36,7 @@ public static class HexDirectionExtensions
     {
         float angleDegrees = (int)direction * 60f;
         float angleRadians = angleDegrees * Mathf.Deg2Rad;
-        return new Vector3(Mathf.Cos(angleRadians), 0f, Mathf.Sin(angleRadians));
+        return new Vector3(Mathf.Cos(angleRadians), 0f, -Mathf.Sin(angleRadians));
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public static class HexDirectionExtensions
     public static Quaternion GetRotation(this HexDirection direction)
     {
         float angleDegrees = (int)direction * 60f;
-        return Quaternion.Euler(0f, angleDegrees, 0f);
+        return Quaternion.Euler(0f, -angleDegrees, 0f);
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ public static class HexDirectionExtensions
     }
 
     /// <summary>
-    /// Convert a world direction vector to the closest hex direction
+    /// Convert a world direction vector to the closest hex direction. Might need editing for Z axial flip
     /// </summary>
     public static HexDirection WorldVectorToHexDirection(Vector3 worldDirection)
     {

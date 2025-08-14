@@ -16,6 +16,33 @@ public class InputRouter : MonoBehaviour
             mainCamera = Camera.main;
     }
 
+
+    void OnDrawGizmos()
+    {
+        Vector2Int[] ring = {
+            new(0,0),
+            new(1,0), new(1,-1), new(0,-1),
+            new(-1,0), new(-1,1), new(0,1)
+        };
+
+        foreach (var h in ring)
+        {
+            var p = GameHex.AxialToWorld(h.x, h.y);
+            Gizmos.DrawSphere(p, 0.25f);
+
+            // round-trip check
+            var hr = GameHex.WorldToAxial(p);
+            Debug.Assert(hr == h, $"Round-trip mismatch: {h} -> {hr}");
+        }
+
+        // Direction rays from origin
+        for (int i=0;i<6;i++)
+        {
+            var v = ((HexDirection)i).GetWorldDirection();
+            Gizmos.DrawLine(Vector3.zero, v);
+        }
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
