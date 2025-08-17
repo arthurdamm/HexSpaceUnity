@@ -73,7 +73,7 @@ public static class HexDirectionExtensions
     }
 
     /// <summary>
-    /// Convert a world direction vector to the closest hex direction. Might need editing for Z axial flip
+    /// Convert a world direction vector to the closest hex direction.
     /// </summary>
     public static HexDirection WorldVectorToHexDirection(Vector3 worldDirection)
     {
