@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c22d98944b2245fcba3e487b5ac50ae, type: 3}
+  m_Script: {fileID: 11500000, guid: 0fcbad5b489dc4156864b3e73a698f7f, type: 3}
   m_Name: HexConfig
-  m_EditorClassIdentifier: Assembly-CSharp::HexConfig
+  m_EditorClassIdentifier: HexSpace.Runtime::HexConfig
   hexSize: 5
   gridRadius: 2

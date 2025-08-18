@@ -3,8 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "HexConfig", menuName = "HexSpace/HexConfig")]
 public class HexConfig : ScriptableObject
 {
-    public float hexSize = 1f;
-    public int gridRadius = 5;
+    public float hexSize = 5f;
+    public int gridRadius = 2;
 
     #if UNITY_EDITOR
     private void OnValidate()

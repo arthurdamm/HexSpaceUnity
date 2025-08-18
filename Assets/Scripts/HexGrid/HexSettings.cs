@@ -34,8 +34,8 @@ public static class HexSettings
     }
 
     // Shorthand properties
-    public static float HexSize => Config != null ? Config.hexSize : 1f;
-    public static int GridRadius => Config != null ? Config.gridRadius : 5;
+    public static float HexSize => Config != null ? Config.hexSize : 5f;
+    public static int GridRadius => Config != null ? Config.gridRadius : 1;
 
     /// <summary>
     /// Bind a config at runtime (editor tool, presets, tests).
