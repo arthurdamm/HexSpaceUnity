@@ -1,7 +1,18 @@
 {
-	"name": "HexSpace.Runtime",
-	  "references": [
-    "Unity.InputSystem",
-    "Unity.TextMeshPro"
-  ]
+    "name": "HexSpace.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "Unity.Cinemachine"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
