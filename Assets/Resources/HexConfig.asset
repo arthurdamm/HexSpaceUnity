@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: HexConfig
   m_EditorClassIdentifier: HexSpace.Runtime::HexConfig
   hexSize: 5
-  gridRadius: 2
+  gridRadius: 10

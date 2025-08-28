@@ -4,10 +4,6 @@ public class SimpleFPSDisplay : MonoBehaviour
 {
     float deltaTime = 0.0f;
 
-    void Start()
-    {
-    }
-
     void Update()
     {
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
