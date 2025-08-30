@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class InputRouter : MonoBehaviour
@@ -13,7 +14,8 @@ public class InputRouter : MonoBehaviour
     void Awake()
     {
         if (mainCamera == null)
-            mainCamera = Camera.main;
+            ;
+            // mainCamera = Camera.main;
     }
 
 
